@@ -1,5 +1,6 @@
 # 本地工具与临时文件
 compress_scenes.ps1
+compress_shopbg.ps1
 validate_data.js
 img_size_check.ps1
 

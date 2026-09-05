@@ -113,6 +113,20 @@
     }
   }
 
+  /* 把玩互动用:临时停掉店内音乐(如收音机响的时候),关掉后恢复 */
+  window.OEBGM = {
+    duck(on) {
+      if (on) {
+        const cur = bgm.els[bgm.current];
+        if (cur && !cur.paused) cur.pause();
+      } else if (bgm.unlocked && !bgm.muted && bgm.current) {
+        const a = bgmEl(bgm.current);
+        a.volume = 0.5;
+        a.play().catch(() => {});
+      }
+    },
+  };
+
   let unit = null;
   let pageIndex = 0;
   let typing = false;
@@ -209,8 +223,9 @@
         slot.className = 'slot ' + (read.has(it.id) ? 'read' : 'unread');
         slot.dataset.id = it.id;
         slot.innerHTML =
+          `<span class="toy-btn" data-toy="${it.id}">把玩</span>` +
           `<img class="item-img" src="${it.img}" alt="${it.name}">` +
-          `<span class="slot-name">${it.name}</span>`;
+          `<span class="price-tag"><b>${it.name}</b><em>陈伯寄卖</em></span>`;
         shelf.appendChild(slot);
       });
       area.appendChild(shelf);
@@ -553,6 +568,11 @@
   $('#btn-mute-shop').addEventListener('click', toggleMute);
 
   $('#shelf-area').addEventListener('click', (e) => {
+    const toyBtn = e.target.closest('.toy-btn');
+    if (toyBtn) {
+      if (window.ToyBox) window.ToyBox.open(toyBtn.dataset.toy);
+      return;
+    }
     const slot = e.target.closest('.slot');
     if (!slot) return;
     const it = ITEMS.find((i) => i.id === slot.dataset.id);
