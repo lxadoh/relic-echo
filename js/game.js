@@ -124,10 +124,10 @@
   let fullText = '';
   let bgIndex = 0;
   let typeGen = 0;
-  const ART_VER = 'p2';
+  const ART_VER = 'p3';
 
-  /* 背景 = 同图深模糊铺底 + 完整画心(contain,不裁切);物件图与场景图同规格 */
-  function setStoryBg(src) {
+  /* 背景 = 同图深模糊铺底(宽屏留白区) + 全屏插画(竖屏 cover / 宽屏 contain);物件图压暗 */
+  function setStoryBg(src, isObject) {
     const idx = bgIndex;
     bgIndex = 1 - bgIndex;
     const bdNext = idx ? $('#story-bg-b') : $('#story-bg-a');
@@ -148,6 +148,7 @@
       revealBd();
     }
 
+    artNext.classList.toggle('dim', !!isObject);
     const revealArt = () => {
       artNext.classList.add('show');
       artPrev.classList.remove('show');
@@ -231,7 +232,7 @@
     pageIndex = 0;
     fromCollection = opts.from === 'collection';
     playBgm(u.id === 'ending' ? 'ending' : 'reading');
-    setStoryBg(u.img);
+    setStoryBg(u.img, true);
     $('#story-name').textContent = u.name;
     $('#story-era').textContent = u.era;
     $('#btn-finish').textContent = u.finishLabel;

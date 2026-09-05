@@ -336,31 +336,41 @@ body::before {
   to { transform: scale(1.2); }
 }
 
-/* 完整插画层:整幅可见,绝不裁切 */
+/* 全屏插画层:构图自带文字暗区(左上+中部)、人物右下;
+   竖屏窗口铺满全屏,宽屏窗口完整显示避免裁切人物 */
 .story-art {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   opacity: 0;
   transition: opacity 1.15s ease;
-  filter: drop-shadow(0 10px 32px rgba(0, 0, 0, 0.55));
 }
-.story-art.show { opacity: 1; }
+.story-art.show { opacity: 1; animation: artSettle 1.8s ease-out both; }
+@keyframes artSettle {
+  from { transform: scale(1.03); }
+  to { transform: none; }
+}
+@media (min-aspect-ratio: 4/5) {
+  .story-art { object-fit: contain; }
+}
 
-/* 暗部渐变 + 四角晕影;中央减淡,让画心透出来 */
+/* 物件图(故事开场、线性故事):压暗适配叠字 */
+.story-art.dim { filter: brightness(0.62) saturate(0.85) sepia(0.1); }
+
+/* 暗部渐变 + 四角晕影;插画自带文字暗区,这里只做兜底压暗 */
 .story-scrim {
   position: absolute;
   inset: 0;
   background:
     radial-gradient(135% 105% at 50% 38%,
-      rgba(16, 11, 6, 0) 46%,
+      rgba(16, 11, 6, 0) 48%,
       rgba(12, 8, 4, 0.4) 100%),
     linear-gradient(180deg,
-      rgba(14, 10, 5, 0.62) 0%,
-      rgba(14, 10, 5, 0.24) 16%,
-      rgba(14, 10, 5, 0.3) 50%,
+      rgba(14, 10, 5, 0.58) 0%,
+      rgba(14, 10, 5, 0.2) 18%,
+      rgba(14, 10, 5, 0.26) 50%,
       rgba(14, 10, 5, 0.78) 76%,
       rgba(14, 10, 5, 0.93) 100%);
 }
