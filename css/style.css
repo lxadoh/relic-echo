@@ -1697,7 +1697,7 @@ body::before {
 #radio-tune { margin-top: 12px; }
 
 /* ---------- 相机胶片面板 ---------- */
-.film-viewer { margin-top: 4px; }
+.film-viewer { position: relative; margin-top: 4px; }
 #film-img {
   display: block;
   width: 100%;
@@ -1711,6 +1711,25 @@ body::before {
   transition: filter 1.1s ease;
 }
 #film-img.dev { filter: none; }
+/* 主图网络加载中:压暗 + 「取出底片」提示 */
+.film-viewer.loading #film-img { opacity: 0.35; }
+.film-viewer.loading::after {
+  content: "取出底片……";
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  letter-spacing: 0.35em;
+  text-indent: 0.35em;
+  color: #a8916a;
+  animation: filmPull 1.1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes filmPull {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
 #film-cap {
   min-height: 22px;
   margin-top: 9px;

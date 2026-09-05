@@ -131,13 +131,14 @@
   ];
 
   /* ---------- 相机胶片 ---------- */
+  /* thumb 为胶片条专用小图(几KB),主图沿用场景原图与故事共享浏览器缓存 */
   const FRAMES = [
-    { img: 'assets/img/scene/cam_frame.jpg',    cap: '一九五八 · 十四岁,进馆当学徒的第一天' },
-    { img: 'assets/img/scene/cam_shop.jpg',     cap: '八十年代 · 东风照相馆,布景前站满了人' },
-    { img: 'assets/img/scene/cam_darkroom.jpg', cap: '暗房 · 红灯下,师傅说:手要稳,眼要准,心要静' },
-    { img: 'assets/img/scene/cam_archive.jpg',  cap: '铁柜 · 四十年的底片袋,编号从〇〇一排到一千' },
-    { img: 'assets/img/scene/cam_deliver.jpg',  cap: '三十里土路 · 蓝布包着的相框,送到了堂屋' },
-    { img: 'assets/img/scene/cam_display.jpg',  cap: '第一千家 · 「等想看的人,回来看」' },
+    { img: 'assets/img/scene/cam_frame.jpg',    thumb: 'assets/img/thumb/cam_frame_t.jpg',    cap: '一九五八 · 十四岁,进馆当学徒的第一天' },
+    { img: 'assets/img/scene/cam_shop.jpg',     thumb: 'assets/img/thumb/cam_shop_t.jpg',     cap: '八十年代 · 东风照相馆,布景前站满了人' },
+    { img: 'assets/img/scene/cam_darkroom.jpg', thumb: 'assets/img/thumb/cam_darkroom_t.jpg', cap: '暗房 · 红灯下,师傅说:手要稳,眼要准,心要静' },
+    { img: 'assets/img/scene/cam_archive.jpg',  thumb: 'assets/img/thumb/cam_archive_t.jpg',  cap: '铁柜 · 四十年的底片袋,编号从〇〇一排到一千' },
+    { img: 'assets/img/scene/cam_deliver.jpg',  thumb: 'assets/img/thumb/cam_deliver_t.jpg',  cap: '三十里土路 · 蓝布包着的相框,送到了堂屋' },
+    { img: 'assets/img/scene/cam_display.jpg',  thumb: 'assets/img/thumb/cam_display_t.jpg',  cap: '第一千家 · 「等想看的人,回来看」' },
   ];
 
   /* ---------- 轻互动入口文字 ---------- */
@@ -506,32 +507,48 @@
   function buildCamera() {
     stage.innerHTML =
       '<div class="film-viewer">' +
-      '  <img id="film-img" alt="">' +
+      '  <img id="film-img" alt="" decoding="async">' +
       '  <p id="film-cap"></p>' +
       '</div>' +
       '<div class="film-strip" id="film-strip"></div>' +
       '<div class="toy-act-row"><button class="btn toy-act" id="film-next">下一张底片</button></div>';
     lineEl.textContent = '铁柜最顺手那一格里,还有一卷没冲完的底片。压一压,让它慢慢显影。';
 
+    const viewer = stage.querySelector('.film-viewer');
     const strip = stage.querySelector('#film-strip');
     const img = stage.querySelector('#film-img');
     const cap = stage.querySelector('#film-cap');
     let cur = 0;
+    const loaded = new Set();
 
     FRAMES.forEach((f, i) => {
       const d = document.createElement('button');
       d.className = 'film-frame';
-      d.innerHTML = '<img src="' + f.img + '" alt="">';
+      d.innerHTML = '<img src="' + f.thumb + '" alt="" loading="lazy" decoding="async">';
       d.addEventListener('click', () => show(i));
       strip.appendChild(d);
     });
     const frames = [...strip.children];
+
+    /* 主图按顺序后台预载:第 1 张立即上屏,其余排队加载 */
+    (function preload(i) {
+      if (i >= FRAMES.length) return;
+      const p = new Image();
+      p.onload = () => { loaded.add(FRAMES[i].img); preload(i + 1); };
+      p.src = FRAMES[i].img;
+    })(0);
+
+    img.addEventListener('load', () => {
+      loaded.add(FRAMES[cur].img);
+      viewer.classList.remove('loading');
+    });
 
     function show(i) {
       cur = i;
       frames.forEach((f, k) => f.classList.toggle('cur', k === i));
       cap.textContent = '';
       img.classList.remove('dev');
+      if (!loaded.has(FRAMES[i].img)) viewer.classList.add('loading');
       img.src = FRAMES[i].img;
       void img.offsetWidth;
       sndShutter();
