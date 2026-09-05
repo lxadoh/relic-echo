@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>旧物回响 · 互动小故事</title>
+<link rel="stylesheet" href="css/style.css?v=20260905b">
+</head>
+<body>
+
+<!-- ===== 标题页 ===== -->
+<section id="screen-title" class="screen active">
+  <img class="bg-img" src="assets/img/title-bg.jpg" alt="">
+  <div class="bg-overlay"></div>
+  <div class="motes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="title-box">
+    <p class="title-pre">巷子深处 · 一间旧货铺</p>
+    <h1 class="title-name">旧物回响</h1>
+    <p class="title-sub">每一件旧物,都记得它主人的故事</p>
+    <div class="title-btns">
+      <button id="btn-start" class="btn">开始游戏</button>
+      <button id="btn-continue" class="btn" style="display:none">继续经营</button>
+    </div>
+    <p class="title-foot">约 20 分钟 · 手机竖屏体验最佳 · 免费无广告</p>
+    <button id="btn-mute-title" class="mute-btn">音乐 开</button>
+  </div>
+</section>
+
+<!-- ===== 小店探索页 ===== -->
+<section id="screen-shop" class="screen">
+  <header class="shop-top">
+    <span id="progress" class="progress">已唤醒 0 / 8 件旧物</span>
+    <div class="shop-top-right">
+      <button id="btn-collect" class="link-btn">回响集</button>
+      <button id="btn-title" class="link-btn">封面</button>
+      <button id="btn-mute-shop" class="link-btn">音乐 开</button>
+    </div>
+  </header>
+
+  <div class="shelf-wrap" id="shelf-area"></div>
+
+  <button id="door-sign" class="door-sign" title="门口的木牌">
+    <img src="assets/img/sign.jpg" class="sign-img" alt="">
+    <span id="sign-text">歇业中</span>
+  </button>
+</section>
+
+<!-- ===== 故事阅读页(全屏插画) ===== -->
+<section id="screen-story" class="screen">
+  <img id="story-bg-a" class="story-bg" alt="">
+  <img id="story-bg-b" class="story-bg" alt="">
+  <img id="story-art-a" class="story-art" alt="">
+  <img id="story-art-b" class="story-art" alt="">
+  <div class="story-scrim" aria-hidden="true"></div>
+  <header class="story-head">
+    <h2 id="story-name">字条</h2>
+    <p id="story-era"></p>
+  </header>
+  <div class="story-body">
+    <p id="story-text" class="story-text"></p>
+  </div>
+  <div class="story-foot">
+    <span id="story-page-num"></span>
+    <span id="story-hint" class="story-hint">轻触,继续</span>
+  </div>
+  <div id="story-actions" class="story-actions">
+    <p id="choice-prompt" class="choice-prompt"></p>
+    <div id="choice-box"></div>
+    <button id="btn-finish" class="btn">收入回响集</button>
+  </div>
+</section>
+
+<!-- ===== 回响集 ===== -->
+<section id="screen-collection" class="screen">
+  <header class="col-top">
+    <button id="btn-col-back" class="link-btn">← 回到店里</button>
+    <h2 class="col-title">回响集</h2>
+    <span id="col-count" class="col-count">0 / 8</span>
+  </header>
+  <p id="col-hint" class="col-hint"></p>
+  <div id="col-grid" class="col-grid"></div>
+</section>
+
+<!-- ===== 结束页 ===== -->
+<section id="screen-credits" class="screen">
+  <img class="bg-img" src="assets/img/ending-bg.jpg" alt="">
+  <div class="bg-overlay"></div>
+  <div class="credits-box">
+    <p class="credits-line">小店的灯,亮着。</p>
+    <h2 class="credits-name">旧物回响</h2>
+    <p class="credits-sub">—— 回响,仍在继续 ——</p>
+    <div class="credits-meta">
+      <p>故事 · 插画:AIGC 生成</p>
+      <p>音乐:Kevin MacLeod(incompetech.com)· CC BY 4.0</p>
+      <p>感谢每一位愿意停下来,听旧物说话的人</p>
+    </div>
+    <div class="credits-btns">
+      <button id="btn-back-shop" class="btn">再回店里看看</button>
+      <button id="btn-restart" class="btn btn-ghost">重新开始</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/data.js?v=20260905"></script>
+<script src="js/game.js?v=20260905d"></script>
+</body>
+</html>
