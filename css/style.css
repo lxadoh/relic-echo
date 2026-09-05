@@ -690,96 +690,375 @@ body::before {
 }
 
 /* ============================================================
- * 回响集
+ * 回响集 · 陈伯的展柜
  * ============================================================ */
 #screen-collection {
-  background: linear-gradient(180deg, #f3e8d2, #e8d8ba);
   padding: max(18px, env(safe-area-inset-top)) 4.5vw 4vh;
   overflow-y: auto;
   display: none;
 }
 #screen-collection.active { display: block; }
 
+/* 店内暗调背景(fixed,不随滚动) */
+#screen-collection::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("../assets/img/shop-bg.jpg") center / cover no-repeat;
+  filter: brightness(0.44) sepia(0.22);
+}
+#screen-collection::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 26%, rgba(232, 179, 74, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(28, 19, 11, 0.5), rgba(28, 19, 11, 0.72));
+}
+#screen-collection::-webkit-scrollbar { width: 5px; }
+#screen-collection::-webkit-scrollbar-thumb {
+  background: rgba(190, 160, 110, 0.4);
+  border-radius: 3px;
+}
+
 .col-top {
+  position: relative;
+  z-index: 1;
   width: min(680px, 100%);
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+#screen-collection .link-btn { color: rgba(246, 233, 208, 0.85); }
+#screen-collection .link-btn:hover { color: var(--glow); }
 
 .col-title {
   font-size: 19px;
   letter-spacing: 0.4em;
   text-indent: 0.4em;
   font-weight: 600;
+  color: #f3e6c8;
+  text-shadow: 0 1px 3px rgba(20, 12, 6, 0.8);
 }
 
-.col-count { font-size: 13.5px; letter-spacing: 0.1em; color: var(--ink-soft); }
+.col-count {
+  font-size: 13.5px;
+  letter-spacing: 0.1em;
+  color: rgba(243, 230, 200, 0.75);
+}
 
 .col-hint {
+  position: relative;
+  z-index: 1;
   width: min(680px, 100%);
   margin: 14px auto 0;
   text-align: center;
   font-size: 13.5px;
   letter-spacing: 0.15em;
-  color: var(--accent);
+  color: var(--glow);
   min-height: 20px;
+  text-shadow: 0 1px 3px rgba(20, 12, 6, 0.7);
 }
 
 .col-grid {
+  position: relative;
+  z-index: 1;
   width: min(680px, 100%);
-  margin: 18px auto 0;
+  margin: 20px auto 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  padding-bottom: 30px;
+  gap: 16px;
+  padding-bottom: 26px;
 }
 @media (min-width: 620px) {
   .col-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
+/* 牛皮纸寄卖档案卡 */
 .col-card {
+  position: relative;
   font-family: inherit;
-  background: var(--card);
-  border: 1px solid #cbb68d;
-  border-radius: 8px;
-  padding: 20px 10px 16px;
+  background: linear-gradient(165deg, #ead8b2 0%, #dfc99c 55%, #d5bd8d 100%);
+  border: 1px solid #b99e6f;
+  border-radius: 3px;
+  box-shadow: 0 3px 12px rgba(18, 11, 5, 0.5);
+  padding: 16px 10px 14px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
-.col-card.unlocked { cursor: pointer; transition: transform 0.25s, border-color 0.25s; }
-.col-card.unlocked:hover { transform: translateY(-3px); border-color: var(--wood-dark); }
+.col-card.unlocked { cursor: pointer; transition: transform 0.25s, box-shadow 0.25s; }
+.col-card.unlocked:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(18, 11, 5, 0.55);
+}
 
 .col-img {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 6px;
-  box-shadow: 0 2px 7px rgba(60, 40, 20, 0.18);
+  border-radius: 2px;
+  box-shadow: 0 2px 7px rgba(60, 40, 20, 0.28);
 }
 
-.col-q {
+/* 贴角胶带 */
+.col-tape {
+  position: absolute;
+  top: -6px;
+  width: 36px;
+  height: 13px;
+  background: rgba(244, 232, 200, 0.5);
+  border-left: 1px dashed rgba(140, 110, 70, 0.3);
+  border-right: 1px dashed rgba(140, 110, 70, 0.3);
+  box-shadow: 0 1px 2px rgba(20, 12, 6, 0.25);
+  pointer-events: none;
+}
+.col-tape.t-l { left: 16px; transform: rotate(-4deg); }
+.col-tape.t-r { right: 16px; transform: rotate(3deg); }
+
+/* 红章「已听」 */
+.col-stamp {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  padding: 1px 5px 1px 7px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  color: #a93b2d;
+  border: 1.5px solid rgba(169, 59, 45, 0.85);
+  border-radius: 3px;
+  transform: rotate(7deg);
+  background: rgba(238, 224, 196, 0.25);
+  pointer-events: none;
+}
+
+/* 未解锁:牛皮纸空袋 */
+.col-card.locked {
+  background: linear-gradient(180deg, rgba(203, 183, 146, 0.32), rgba(178, 156, 118, 0.28));
+  border: 1px dashed rgba(206, 186, 150, 0.55);
+  box-shadow: none;
+}
+.col-card.locked .col-q {
   font-size: 34px;
   line-height: 58px;
-  color: #c5b795;
+  color: rgba(240, 228, 200, 0.4);
 }
 
-.col-name { font-size: 14px; letter-spacing: 0.15em; }
-.col-card.locked .col-name { color: var(--ink-soft); opacity: 0.7; }
+.col-name { font-size: 14px; letter-spacing: 0.15em; color: #4a3722; }
+.col-card.locked .col-name { color: rgba(240, 228, 200, 0.55); }
 
 .col-epigraph {
   font-size: 12px;
-  line-height: 1.7;
-  color: var(--ink-soft);
+  line-height: 1.65;
+  color: #7c6647;
 }
 
-.col-endings {
-  font-size: 11.5px;
+/* 结局印记:三枚「回」章 + 隐藏金星 */
+.col-seals {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  margin-top: 2px;
+}
+.seal {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  border-radius: 50%;
+  border: 1.5px solid rgba(124, 102, 71, 0.45);
+  color: rgba(124, 102, 71, 0.4);
+  background: rgba(255, 248, 230, 0.28);
+}
+.seal.lit {
+  border-color: #a93b2d;
+  color: #a93b2d;
+  background: rgba(169, 59, 45, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(169, 59, 45, 0.18);
+}
+.seal.egg-seal { border-style: dotted; color: rgba(124, 102, 71, 0.3); }
+.seal.egg-seal.lit {
+  border-style: solid;
+  border-color: #d99a2b;
+  color: #d99a2b;
+  background: rgba(217, 154, 43, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(217, 154, 43, 0.2);
+}
+
+/* ---------- 结局图鉴弹层 ---------- */
+#col-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 820;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(22, 14, 8, 0.68);
+}
+#col-detail.open { display: flex; }
+
+.cd-panel {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: linear-gradient(168deg, #ece0c2 0%, #e3d2ad 100%);
+  border: 1px solid #b99e6f;
+  border-radius: 6px;
+  box-shadow: 0 18px 55px rgba(10, 6, 2, 0.6);
+  padding: 30px 26px 24px;
+}
+.cd-panel::-webkit-scrollbar { width: 5px; }
+.cd-panel::-webkit-scrollbar-thumb {
+  background: rgba(150, 120, 70, 0.4);
+  border-radius: 3px;
+}
+
+.cd-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: inherit;
+  font-size: 14px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: #7c6647;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.cd-close:hover { color: var(--accent); }
+
+.cd-head {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.cd-img {
+  width: 104px;
+  height: 104px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(50, 32, 14, 0.3);
+  flex: none;
+}
+.cd-head-text h3 {
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  color: #3f2e1e;
+}
+.cd-era {
+  margin-top: 5px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #9c8258;
+}
+.cd-epigraph {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #7c6647;
+}
+
+.cd-endings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 560px) {
+  .cd-endings { grid-template-columns: 1fr; }
+}
+
+.cd-end {
+  background: rgba(255, 250, 236, 0.55);
+  border: 1px solid #cdb68d;
+  border-radius: 4px;
+  padding: 14px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.cd-end .cd-tag {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #9c8258;
+}
+.cd-end h4 {
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: #3f2e1e;
+}
+.cd-end .cd-quote {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #6d5335;
+}
+.cd-end:not(.got) {
+  border-style: dashed;
+  background: rgba(255, 250, 236, 0.22);
+}
+.cd-end:not(.got) h4 {
+  color: #b3986e;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+}
+.cd-end .cd-hint {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #9a8262;
+}
+
+/* 隐藏彩蛋行 */
+.cd-egg {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 13px 18px;
+  border: 1.5px dotted rgba(150, 120, 70, 0.45);
+  border-radius: 4px;
+  background: rgba(217, 154, 43, 0.05);
+}
+.cd-egg-star {
+  flex: none;
+  font-size: 22px;
+  line-height: 1;
+  color: rgba(150, 120, 70, 0.35);
+}
+.cd-egg.got .cd-egg-star {
+  color: #d99a2b;
+  text-shadow: 0 0 12px rgba(217, 154, 43, 0.55);
+}
+.cd-egg h4 { font-size: 14.5px; color: #3f2e1e; }
+.cd-egg:not(.got) h4 { color: #b3986e; letter-spacing: 0.5em; }
+.cd-egg .cd-quote {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #6d5335;
+  margin-top: 3px;
+}
+.cd-egg .cd-hint {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #9a8262;
+  margin-top: 3px;
+}
+
+.cd-act-row {
+  margin-top: 20px;
+  text-align: center;
 }
 
 /* ============================================================
