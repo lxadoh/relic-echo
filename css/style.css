@@ -375,6 +375,26 @@ body::before {
       rgba(14, 10, 5, 0.93) 100%);
 }
 
+/* 宽屏:右侧叠字区加深,与插画预留暗区配合 */
+@media (min-width: 920px) {
+  .story-scrim {
+    background:
+      linear-gradient(to left,
+        rgba(14, 10, 5, 0.55) 0%,
+        rgba(14, 10, 5, 0.2) 30%,
+        rgba(14, 10, 5, 0) 55%),
+      radial-gradient(135% 105% at 50% 38%,
+        rgba(16, 11, 6, 0) 48%,
+        rgba(12, 8, 4, 0.4) 100%),
+      linear-gradient(180deg,
+        rgba(14, 10, 5, 0.58) 0%,
+        rgba(14, 10, 5, 0.2) 18%,
+        rgba(14, 10, 5, 0.26) 50%,
+        rgba(14, 10, 5, 0.78) 76%,
+        rgba(14, 10, 5, 0.93) 100%);
+  }
+}
+
 /* 细颗粒:统一水彩纸质感 */
 #screen-story::after {
   content: "";
