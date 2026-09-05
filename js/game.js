@@ -124,7 +124,7 @@
   let fullText = '';
   let bgIndex = 0;
   let typeGen = 0;
-  const ART_VER = 'p4';
+  const ART_VER = 'p5';
 
   /* 背景 = 同图深模糊铺底(窄屏上下留白区) + 横版插画(窄屏 contain 完整显示 / 宽屏 cover 铺满);物件图压暗 */
   function setStoryBg(src, isObject) {
