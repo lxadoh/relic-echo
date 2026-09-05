@@ -922,7 +922,9 @@ body::before {
 .toy-act-row { margin-top: 14px; }
 .toy-act { font-size: 15px; padding: 10px 26px; }
 
-/* ---------- 轻互动大图 + 动作动画 ---------- */
+/* ---------- 轻互动:六件小场景 ---------- */
+.mini-scene { position: relative; }
+
 .toy-img {
   display: block;
   width: min(230px, 56vw);
@@ -930,54 +932,387 @@ body::before {
   border-radius: 10px;
   box-shadow: 0 10px 26px rgba(30, 15, 0, 0.35);
 }
-@keyframes toyBump {
-  0% { transform: rotate(0); }
-  25% { transform: rotate(-7deg) translateY(3px); }
-  55% { transform: rotate(4deg) translateY(-3px); }
-  100% { transform: rotate(0); }
+
+/* --- 搪瓷缸:热茶白汽 --- */
+.steam {
+  position: absolute;
+  top: 9%;
+  width: 13px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 252, 244, 0) 0%, rgba(255, 252, 244, 0.62) 85%);
+  filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
 }
-.anim-bump { animation: toyBump 0.5s ease-out; }
-@keyframes toyLid {
-  0% { transform: translateY(0) rotate(0); }
-  32% { transform: translateY(-16px) rotate(-8deg); }
-  64% { transform: translateY(-11px) rotate(-4deg); }
-  100% { transform: translateY(0) rotate(0); }
+.steaming .steam { animation: steamRise 2.7s ease-out infinite; }
+.steaming .s1 { left: 44%; }
+.steaming .s2 { left: 50%; animation-delay: 0.9s; }
+.steaming .s3 { left: 56%; animation-delay: 1.8s; }
+@keyframes steamRise {
+  0% { transform: translateY(14px) scaleY(0.5); opacity: 0; }
+  30% { opacity: 0.75; }
+  100% { transform: translateY(-46px) translateX(6px) scaleY(1.35); opacity: 0; }
 }
-.anim-lid { animation: toyLid 0.85s ease-out; }
-@keyframes toyUnfold {
-  0% { transform: scale(0.45) rotate(-12deg); opacity: 0.3; }
-  62% { transform: scale(1.07) rotate(2deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0); }
+
+/* --- 饼干盒:开盖见信 --- */
+.tin {
+  position: relative;
+  width: min(225px, 58vw);
+  aspect-ratio: 1;
+  margin: 12px auto 6px;
 }
-.anim-unfold { animation: toyUnfold 0.75s ease-out; }
-@keyframes toyPedal {
+.tin-lid {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #b03a2e 0%, #8a2b20 55%, #641c14 100%);
+  border: 1.5px solid #4a120c;
+  box-shadow: inset 0 2px 0 rgba(255, 180, 150, 0.25), 0 9px 22px rgba(10, 4, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+.tin-lid span {
+  font-size: 62px;
+  font-weight: 700;
+  color: #e8c05a;
+  text-shadow: 0 1px 0 #8a6a20, 0 3px 8px rgba(0, 0, 0, 0.45);
+}
+.lid-open .tin-lid {
+  transform: translateY(-92px) rotate(-11deg);
+  opacity: 0;
+}
+.tin-inside {
+  position: absolute;
+  inset: 5px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #5a2018, #3c130d);
+  box-shadow: inset 0 5px 14px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+.letter-stack {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  height: 36%;
+  background: linear-gradient(180deg, #efe3c0, #e0d0a6);
+  border: 1px solid #c9b686;
+  border-radius: 2px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+.ls-a { bottom: 14%; transform: rotate(-2deg); }
+.ls-b { bottom: 18%; left: 14%; right: 10%; transform: rotate(1.6deg); }
+.ls-c { bottom: 22%; transform: rotate(-0.5deg); }
+.red-string {
+  position: absolute;
+  background: #c0503a;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.45s;
+}
+.rs-h { left: 5%; right: 5%; bottom: 32%; height: 3px; }
+.rs-v { width: 3px; top: 10%; bottom: 10%; left: 50%; transform: rotate(10deg); }
+.letter-out .red-string { opacity: 0; }
+.tin-letter {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  width: 84%;
+  z-index: 2;
+  perspective: 260px;
+  background: linear-gradient(180deg, #f4ead0, #e9dab2);
+  border: 1px solid #c9b686;
+  border-radius: 3px;
+  padding: 20px 12px 12px;
+  box-shadow: 0 12px 26px rgba(10, 4, 0, 0.5);
+  opacity: 0;
+  transform: translateX(-50%) translateY(6px) rotate(-1.5deg) scale(0.9);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.letter-out .tin-letter {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px) rotate(-1deg) scale(1);
+}
+.tl-flap {
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  top: -21px;
+  height: 24px;
+  background: linear-gradient(180deg, #e6d7ae, #f2e7ca);
+  border: 1px solid #c9b686;
+  border-bottom: none;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  transform-origin: top center;
+  transition: transform 0.65s ease;
+}
+.letter-read .tl-flap { transform: rotateX(178deg); }
+.tl-text {
+  font-size: 13.5px;
+  line-height: 2.1;
+  letter-spacing: 0.06em;
+  color: #5a4630;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.25s;
+}
+.letter-read .tl-text { opacity: 1; }
+.tl-stamp {
+  position: absolute;
+  right: 9px;
+  top: 7px;
+  width: 22px;
+  height: 26px;
+  background:
+    radial-gradient(circle at 50% 50%, #d8c49a 60%, transparent 61%) 0 0 / 4px 4px,
+    #d8c49a;
+  border: 1px solid #b39a6e;
+  border-radius: 1px;
+  opacity: 0.9;
+}
+
+/* --- 手帕:凑近看 --- */
+.hanky-wrap {
+  position: relative;
+  width: min(250px, 62vw);
+  margin: 10px auto 2px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(30, 15, 0, 0.35);
+}
+.hanky-img {
+  display: block;
+  width: 100%;
+  transform-origin: 50% 42%;
+  transition: transform 2.3s ease;
+}
+.zoom .hanky-img { transform: scale(2.35); }
+.hanky-crease {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  bottom: 5%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, rgba(110, 90, 60, 0.4) 30%, rgba(110, 90, 60, 0.4) 70%, transparent);
+  pointer-events: none;
+}
+.hanky-words {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  font-size: 21px;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  white-space: nowrap;
+  color: #41529a;
+  opacity: 0;
+  filter: blur(3px);
+  transition: opacity 1.7s ease 0.9s, filter 1.7s ease 0.9s;
+  pointer-events: none;
+}
+.zoom .hanky-words { opacity: 0.78; filter: blur(0.4px); }
+
+/* --- 缝纫机:红格子布走线 --- */
+.sew-machine {
+  display: block;
+  width: min(215px, 54vw);
+  margin: 6px auto 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(30, 15, 0, 0.3);
+}
+.running .sew-machine { animation: sewShake 0.12s linear infinite; }
+@keyframes sewShake {
   0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(1px, -1px); }
-  50% { transform: translate(-1px, 1px); }
-  75% { transform: translate(1px, 1px); }
+  25% { transform: translate(0.7px, -0.5px); }
+  50% { transform: translate(-0.6px, 0.6px); }
+  75% { transform: translate(0.5px, 0.4px); }
 }
-.anim-pedal { animation: toyPedal 0.13s linear 10; }
-@keyframes toyHop {
-  0%, 56% { transform: translate(0, 0) rotate(0); }
-  4%, 14%, 24%, 34%, 44%, 54% { transform: translate(1px, -1px) rotate(1.2deg); }
-  9%, 19%, 29%, 39%, 49% { transform: translate(-1px, 1px) rotate(-1.2deg); }
-  58% { transform: translateY(0) scale(1.05, 0.9); }
-  64% { transform: translateY(-36px) rotate(-9deg); }
-  70% { transform: translateY(0) scale(1, 0.94); }
-  78% { transform: translateY(0) scale(1.05, 0.9); }
-  84% { transform: translateY(-27px) rotate(7deg); }
-  90% { transform: translateY(0) scale(1, 0.94); }
-  100% { transform: translateY(0) scale(1); }
+.sew-table {
+  position: relative;
+  height: 92px;
+  max-width: 330px;
+  margin: 14px auto 4px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #7a5c3e, #5d442c);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.35), 0 6px 14px rgba(10, 4, 0, 0.3);
+  overflow: hidden;
 }
-.anim-hop { animation: toyHop 2.4s ease-in-out; }
-@keyframes toyWiggle {
-  0%, 100% { transform: rotate(0); }
-  16% { transform: rotate(-13deg); }
-  38% { transform: rotate(10deg); }
-  58% { transform: rotate(-7deg); }
-  78% { transform: rotate(4deg); }
+.sew-cloth {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  top: 18px;
+  bottom: 18px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 235, 220, 0.26) 0 5px, transparent 5px 26px),
+    repeating-linear-gradient(90deg, rgba(255, 235, 220, 0.26) 0 5px, transparent 5px 26px),
+    #b8402c;
+  box-shadow: inset 0 3px 8px rgba(80, 20, 10, 0.45);
 }
-.anim-wiggle { animation: toyWiggle 0.95s ease-in-out; }
+.running .sew-cloth { animation: clothFeed 2.85s linear; }
+@keyframes clothFeed { from { transform: translateX(0); } to { transform: translateX(58px); } }
+.sew-stitch {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  height: 3px;
+  width: 0;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, #5a2416 0 9px, transparent 9px 15px);
+}
+.running .sew-stitch { animation: stitchGrow 2.85s linear forwards; }
+.done .sew-stitch { width: 84%; }
+@keyframes stitchGrow { from { width: 0; } to { width: 84%; } }
+.sew-needle {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  width: 3px;
+  height: 42px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #d3d8dc, #8f979e);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+}
+.sew-needle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f0ead6;
+  transform: translateX(-50%);
+}
+.running .sew-needle { animation: needleBob 0.12s linear infinite, needleMove 2.85s linear forwards; }
+.done .sew-needle { left: 86%; }
+@keyframes needleBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+@keyframes needleMove { from { left: 8%; } to { left: 86%; } }
+
+/* --- 铁皮青蛙:上弦,跳两下,侧身倒 --- */
+.frog-stage {
+  position: relative;
+  width: min(250px, 62vw);
+  margin: 10px auto 4px;
+  padding-bottom: 16px;
+}
+.frog-stage::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 13px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #9a7a58, #6e523a);
+  box-shadow: 0 4px 10px rgba(10, 4, 0, 0.4);
+}
+.frog-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(175px, 44vw);
+  margin: 0 auto;
+}
+.wound .frog-img { animation: frogAct 3.3s ease-in-out; }
+@keyframes frogAct {
+  0% { transform: translate(0, 0) rotate(0); }
+  6% { transform: translate(1px, -1px) rotate(1deg); }
+  12% { transform: translate(-1px, 1px) rotate(-1deg); }
+  18% { transform: translate(1px, -1px) rotate(1.2deg); }
+  24% { transform: translate(-1px, 1px) rotate(-1deg); }
+  30% { transform: translate(0, 0) rotate(0); }
+  38% { transform: translate(16px, -30px) rotate(-6deg) scale(1.04); }
+  44% { transform: translate(32px, 0) rotate(2deg) scale(1, 0.92); }
+  52% { transform: translate(48px, -26px) rotate(-5deg); }
+  58% { transform: translate(66px, 0) rotate(2deg) scale(1, 0.92); }
+  70% { transform: translate(72px, -8px) rotate(34deg); }
+  82% { transform: translate(76px, 2px) rotate(80deg); }
+  90% { transform: translate(75px, 0) rotate(72deg); }
+  100% { transform: translate(76px, 2px) rotate(76deg); }
+}
+.frog-key {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border: 4px solid #8a7355;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+.frog-key::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  width: 5px;
+  height: 15px;
+  background: #8a7355;
+  transform: translateX(-50%);
+}
+.wound .frog-key { animation: keySpin 1.4s cubic-bezier(0.3, 0, 0.7, 1); }
+@keyframes keySpin { from { transform: rotate(0); } to { transform: rotate(1440deg); } }
+
+/* --- 军用水壶:拧盖,灯下看刻字 --- */
+.cant-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 12px auto 2px;
+}
+.cant-img {
+  width: min(165px, 40vw);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(30, 15, 0, 0.35);
+  transition: transform 0.55s ease;
+}
+.opened .cant-img { transform: rotate(-6deg) translateY(-4px); }
+.cant-cap {
+  position: relative;
+  width: 106px;
+  height: 106px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #9aab92, #5c6e54 55%, #3f4d38);
+  border: 5px solid #57654e;
+  box-shadow: 0 8px 20px rgba(10, 4, 0, 0.4), inset 0 0 0 8px rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.55);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.opened .cant-cap { opacity: 1; transform: scale(1); }
+.cant-cap span {
+  font-size: 13px;
+  line-height: 2;
+  letter-spacing: 0.16em;
+  text-align: center;
+  color: #e6ddc0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  opacity: 0;
+  filter: blur(2.5px);
+  transition: opacity 1.5s ease 0.25s, filter 1.5s ease 0.25s;
+}
+.engraved .cant-cap span { opacity: 0.94; filter: blur(0.3px); }
+.cant-cap::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 220, 150, 0.3), transparent 62%);
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+}
+.engraved .cant-cap::after { opacity: 1; animation: capGlow 2.6s ease-in-out infinite alternate; }
+@keyframes capGlow { from { opacity: 0.45; } to { opacity: 1; } }
 
 /* ---------- 收音机面板 ---------- */
 .radio-box {

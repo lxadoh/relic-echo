@@ -53,11 +53,12 @@
   }
 
   /* ---------- 各物件音效 ---------- */
-  function sndClink() {   // 搪瓷缸:瓷面轻磕
-    tone(2350, 0.3, 0.22);
-    tone(3520, 0.22, 0.1, 'sine', 0.004);
+  function sndPour() {    // 搪瓷缸:热水冲进缸
+    noise(0.55, 0.13, 'bandpass', 950, 0, 0);
+    noise(0.7, 0.1, 'lowpass', 520, 380, 0.5);
+    tone(340, 0.4, 0.04, 'sine', 0.55);
   }
-  function sndRustle() {  // 饼干盒:纸盒滑开+玻璃纸
+  function sndRustle() {  // 饼干盒:盒盖滑开+信纸
     noise(0.1, 0.16, 'highpass', 1100, 0, 0);
     noise(0.08, 0.12, 'highpass', 1600, 0, 0.13);
     noise(0.22, 0.1, 'highpass', 900, 2400, 0.26);
@@ -71,9 +72,9 @@
       tone(i % 2 ? 1050 : 880, 0.05, 0.16, 'square', i * 0.13);
     }
   }
-  function sndFrog() {    // 青蛙:上弦加速+两跳
+  function sndFrog() {    // 青蛙:上弦→跳两下→侧身倒
     let t = 0;
-    for (let i = 0; i < 12; i++) { t += 0.16 - i * 0.008; tone(920, 0.03, 0.13, 'square', t); }
+    for (let i = 0; i < 10; i++) { t += 0.13 - i * 0.005; tone(920, 0.03, 0.12, 'square', t); }
     const jump = (w) => {
       const c = ac(), tt = c.currentTime + w;
       const o = c.createOscillator(), g = c.createGain();
@@ -84,15 +85,15 @@
       g.gain.exponentialRampToValueAtTime(0.0001, tt + 0.15);
       o.connect(g).connect(c.destination);
       o.start(tt); o.stop(tt + 0.2);
-      tone(120, 0.09, 0.2, 'sine', w + 0.16);
     };
-    jump(t + 0.25);
-    jump(t + 0.75);
+    jump(1.25);
+    jump(1.85);
+    tone(1400, 0.04, 0.12, 'square', 2.55);
+    tone(420, 0.2, 0.1, 'sine', 2.6);
   }
-  function sndSlosh() {   // 水壶:半壶水晃荡
-    noise(0.28, 0.18, 'lowpass', 520, 300, 0);
-    noise(0.3, 0.14, 'lowpass', 460, 260, 0.32);
-    tone(180, 0.12, 0.08, 'sine', 0.5);
+  function sndScrew() {   // 水壶:拧盖棘轮+轻磕
+    for (let i = 0; i < 5; i++) tone(1500, 0.028, 0.12, 'square', i * 0.14);
+    tone(2350, 0.16, 0.07, 'sine', 0.78);
   }
   function sndShutter() { // 相机:快门
     noise(0.025, 0.2, 'highpass', 2600, 0, 0);
@@ -139,20 +140,14 @@
     { img: 'assets/img/scene/cam_display.jpg',  cap: '第一千家 · 「等想看的人,回来看」' },
   ];
 
-  /* ---------- 轻互动配置 ---------- */
-  const MINI = {
-    mug:     { act: '磕一磕',   anim: 'bump',   sound: sndClink,
-               line: '缸沿磕在桌面上,声音还清脆。裂纹,是它自己的年头。' },
-    tin:     { act: '开盖看看', anim: 'lid',    sound: sndRustle,
-               line: '盒底压着一张玻璃纸,折得平平整整。糖,早就没有了。' },
-    hanky:   { act: '展开',     anim: 'unfold', sound: sndCloth,
-               line: '帕角两朵莲,粉线挨着红线。折痕深处,藏着一行小字。' },
-    sewing:  { act: '踩两脚',   anim: 'pedal',  sound: sndPedal,
-               line: '咔嗒,咔嗒——机器还记得自己的节奏。' },
-    frog:    { act: '上弦',     anim: 'hop',    sound: sndFrog,
-               line: '发条上满了。它还能跳,一下,两下。' },
-    canteen: { act: '摇一摇',   anim: 'wiggle', sound: sndSlosh,
-               line: '壶里好像还有半口水。晃一晃,咚咚地响。' },
+  /* ---------- 轻互动入口文字 ---------- */
+  const MINI_ACT = {
+    mug: '沏一杯热茶',
+    tin: '打开盒盖',
+    hanky: '凑近看',
+    sewing: '踩两脚踏板',
+    frog: '上几圈发条',
+    canteen: '拧开壶盖',
   };
 
   /* ---------- 弹层骨架 ---------- */
@@ -197,24 +192,192 @@
   function esc(e) { if (e.key === 'Escape') close(); }
   document.addEventListener('keydown', esc);
 
-  /* ---------- 轻互动 ---------- */
-  function buildMini(id) {
-    const cfg = MINI[id];
-    if (!cfg) return;
+  /* ---------- 轻互动:六件各有小场景 ---------- */
+  function miniFrame(inner, act, onAct) {
     stage.innerHTML =
-      '<img class="toy-img" src="' + byId[id].img + '" alt="">' +
-      '<div class="toy-act-row"><button class="btn toy-act">' + cfg.act + '</button></div>';
-    lineEl.textContent = cfg.line;
-    const img = stage.querySelector('.toy-img');
+      '<div class="mini-scene">' + inner + '</div>' +
+      '<div class="toy-act-row"><button class="btn toy-act">' + act + '</button></div>';
     const btn = stage.querySelector('.toy-act');
-    const doIt = () => {
-      img.classList.remove('anim-' + cfg.anim);
-      void img.offsetWidth; /* 重置动画 */
-      img.classList.add('anim-' + cfg.anim);
-      cfg.sound();
-    };
-    btn.addEventListener('click', doIt);
-    setTimeout(doIt, 250);
+    btn.addEventListener('click', onAct);
+    return { box: stage.querySelector('.mini-scene'), btn };
+  }
+
+  /* 搪瓷缸:沏一杯热茶,白汽一缕一缕往上爬 */
+  function buildMug(alive) {
+    const { box, btn } = miniFrame(
+      '<img class="toy-img" src="' + byId.mug.img + '" alt="">' +
+      '<i class="steam s1"></i><i class="steam s2"></i><i class="steam s3"></i>',
+      '沏一杯热茶',
+      () => {
+        if (!alive.on) return;
+        box.classList.remove('steaming');
+        void box.offsetWidth;
+        box.classList.add('steaming');
+        sndPour();
+        setTimeout(() => {
+          if (!alive.on) return;
+          lineEl.textContent = '热气,一缕一缕地往上爬——像那年夜班,老周从怀里摸出茶叶,泡的半缸子热茶。';
+        }, 1400);
+      });
+    lineEl.textContent = '白瓷磕掉了一块,露出黑铁。缸里,还留着一点茶垢。';
+    setTimeout(() => btn.click(), 250);
+  }
+
+  /* 饼干盒:开盖见信,解绳读信 */
+  function buildTin(alive) {
+    const { box, btn } = miniFrame(
+      '<div class="tin">' +
+      '  <div class="tin-inside">' +
+      '    <i class="letter-stack ls-a"></i><i class="letter-stack ls-b"></i><i class="letter-stack ls-c"></i>' +
+      '    <i class="red-string rs-h"></i><i class="red-string rs-v"></i>' +
+      '  </div>' +
+      '  <div class="tin-letter">' +
+      '    <div class="tl-flap"></div>' +
+      '    <p class="tl-text">你的字,像砖坯上刻的,<br>笨——可我认得。</p>' +
+      '    <i class="tl-stamp"></i>' +
+      '  </div>' +
+      '  <div class="tin-lid"><span>囍</span></div>' +
+      '</div>',
+      '打开盒盖',
+      () => {
+        if (!alive.on) return;
+        if (!box.classList.contains('lid-open')) {
+          box.classList.add('lid-open');
+          sndRustle();
+          btn.textContent = '解开红头绳';
+          lineEl.textContent = '里面没有饼干——一沓信,红头绳捆着。信封黄了,八分的邮票,端端正正。';
+          return;
+        }
+        if (!box.classList.contains('letter-out')) {
+          box.classList.add('letter-out');
+          sndRustle();
+          setTimeout(() => { if (alive.on) box.classList.add('letter-read'); }, 750);
+          setTimeout(() => {
+            if (!alive.on) return;
+            lineEl.textContent = '最上面这封,是她的回信。字笨,可一笔,是一笔。';
+          }, 1500);
+          btn.textContent = '叠好,放回去';
+          return;
+        }
+        box.classList.remove('letter-out', 'letter-read');
+        btn.textContent = '解开红头绳';
+        lineEl.textContent = '信,一沓一沓码好。红头绳,重新捆上。';
+      });
+    lineEl.textContent = '铁皮盒的漆色薄了。盒盖上那个红双喜,倒还留着颜色。';
+    setTimeout(() => btn.click(), 250);
+  }
+
+  /* 手帕:凑近看,折痕深处的字 */
+  function buildHanky(alive) {
+    const { box, btn } = miniFrame(
+      '<div class="hanky-wrap">' +
+      '  <img class="hanky-img" src="' + byId.hanky.img + '" alt="">' +
+      '  <i class="hanky-crease"></i>' +
+      '  <span class="hanky-words">我等你</span>' +
+      '</div>',
+      '凑近看',
+      () => {
+        if (!alive.on) return;
+        const z = box.classList.toggle('zoom');
+        btn.textContent = z ? '退远些' : '凑近看';
+        if (z) {
+          sndCloth();
+          lineEl.textContent = '折痕最深处——好像,有字。';
+          setTimeout(() => {
+            if (alive.on && box.classList.contains('zoom'))
+              lineEl.textContent = '针脚很深。像要把这三个字,按进布的骨头里。';
+          }, 2400);
+        } else {
+          lineEl.textContent = '叠好。折痕,深得快要断开。';
+        }
+      });
+    lineEl.textContent = '细白棉布,锁着一圈细细的牙针。帕角,绣着并蒂莲。';
+  }
+
+  /* 缝纫机:踩踏板,红格子布走线 */
+  function buildSewing(alive) {
+    const { box, btn } = miniFrame(
+      '<img class="sew-machine" src="' + byId.sewing.img + '" alt="">' +
+      '<div class="sew-table">' +
+      '  <i class="sew-cloth"></i>' +
+      '  <i class="sew-stitch"></i>' +
+      '  <i class="sew-needle"></i>' +
+      '</div>',
+      '踩两脚踏板',
+      () => {
+        if (!alive.on) return;
+        box.classList.remove('running', 'done');
+        void box.offsetWidth;
+        box.classList.add('running');
+        sndPedal();
+        setTimeout(() => { if (alive.on) sndPedal(); }, 1450);
+        setTimeout(() => {
+          if (!alive.on) return;
+          box.classList.remove('running');
+          box.classList.add('done');
+          lineEl.textContent = '咔嗒,咔嗒。针脚要匀——娘说,人这一辈子,跟踩机器一个理:别慌。';
+        }, 2900);
+      });
+    lineEl.textContent = '「蝴蝶牌」三个金字,还亮着。红格子布,已经绷好了。';
+    setTimeout(() => btn.click(), 250);
+  }
+
+  /* 铁皮青蛙:上弦,跳两下,侧身倒 */
+  function buildFrog(alive) {
+    const { box, btn } = miniFrame(
+      '<div class="frog-stage"><i class="frog-key"></i>' +
+      '<img class="frog-img" src="' + byId.frog.img + '" alt="">' +
+      '</div>',
+      '上几圈发条',
+      () => {
+        if (!alive.on) return;
+        box.classList.remove('wound');
+        void box.offsetWidth;
+        box.classList.add('wound');
+        sndFrog();
+        setTimeout(() => {
+          if (alive.on) lineEl.textContent = '跳两下,侧身——倒了。隔了五十年,还是这个脾气。';
+        }, 3400);
+      });
+    lineEl.textContent = '「上八圈就行!二十圈,崩发条!」——这话,说了一代,又传一代。';
+    setTimeout(() => btn.click(), 250);
+  }
+
+  /* 军用水壶:拧开盖,灯下看刻字 */
+  function buildCanteen(alive) {
+    const { box, btn } = miniFrame(
+      '<div class="cant-row">' +
+      '  <img class="cant-img" src="' + byId.canteen.img + '" alt="">' +
+      '  <div class="cant-cap"><span>赠 王铁柱<br>一九七一</span></div>' +
+      '</div>',
+      '拧开壶盖',
+      () => {
+        if (!alive.on) return;
+        const opened = box.classList.toggle('opened');
+        if (opened) {
+          sndScrew();
+          btn.textContent = '凑到灯下看看';
+          lineEl.textContent = '盖子拧开,一股淡淡的茶叶味——散不掉的那种。';
+          setTimeout(() => {
+            if (!alive.on) return;
+            box.classList.add('engraved');
+            lineEl.textContent = '借着灯光,壶盖内壁有一行极小的刻字——「赠 王铁柱,一九七一」。他的老班长。';
+          }, 1300);
+        } else {
+          box.classList.remove('engraved');
+          btn.textContent = '拧开壶盖';
+          lineEl.textContent = '把盖子拧回去。茶要酽,日子才顶得住。';
+        }
+      });
+    lineEl.textContent = '帆布背带,磨穿了两个洞。绿漆磕出的白点,像一身的勋章。';
+    setTimeout(() => btn.click(), 250);
+  }
+
+  function buildMini(id) {
+    const alive = { on: true };
+    cleanup = () => { alive.on = false; };
+    const builders = { mug: buildMug, tin: buildTin, hanky: buildHanky, sewing: buildSewing, frog: buildFrog, canteen: buildCanteen };
+    (builders[id] || buildMug)(alive);
   }
 
   /* ---------- 收音机 ---------- */
@@ -388,5 +551,5 @@
   }
 
   /* ---------- 对外 ---------- */
-  window.ToyBox = { open, close, has: (id) => id === 'radio' || id === 'camera' || !!MINI[id] };
+  window.ToyBox = { open, close, has: (id) => id === 'radio' || id === 'camera' || !!MINI_ACT[id] };
 })();
